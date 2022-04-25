@@ -10,11 +10,28 @@ import UIKit
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
-
-
+    /// True only when the app is launched through UI Testing
+    static var uiTestingEnable: Bool {
+        return ProcessInfo.processInfo.arguments.contains("UI_TESTING")
+    }
+    
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+        // Setup UI testing
+        self.setupUITesting()
         return true
+    }
+    
+    private func setupUITesting() {
+        if AppDelegate.uiTestingEnable {
+
+            UserDefaults.standard.removePersistentDomain(forName: Bundle.main.bundleIdentifier!)
+            let defaults = UserDefaults.standard
+            let dictionary = defaults.dictionaryRepresentation()
+            dictionary.keys.forEach { key in
+                defaults.removeObject(forKey: key)
+            }
+        }
     }
 
     // MARK: UISceneSession Lifecycle
